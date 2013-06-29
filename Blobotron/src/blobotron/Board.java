@@ -260,7 +260,7 @@ public class Board extends JPanel implements ActionListener {
 		            pb.setVisible(false);
 		            b.setVisible(false);
 		            
-		            // explosion added to array at location of collision
+		            // explosion added to array at x/y location of collision
 		            
 		            explosionArrayList.add(new EntityExplosion(pb.x, pb.y, EntityExplosion.EXPLOSION_IMG));
 		        }
