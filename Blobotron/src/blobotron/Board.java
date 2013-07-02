@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -46,10 +47,6 @@ public class Board extends JPanel implements ActionListener {
 	public static final int WIDTH = 1024;
 	public static final int HEIGHT = 716;
 	
-	private int[][] blobPosition = { 
-            {10,10}, {900, 700}
-         };
-	
 	// constructor, creates board for the game
 	
 	public Board() {
@@ -75,7 +72,7 @@ public class Board extends JPanel implements ActionListener {
         
         // call method to initialize blobs
         
-        initBlobs();
+        addBlob(true);
         
         // initialize timer w/5 millisecond delay
         
@@ -88,15 +85,68 @@ public class Board extends JPanel implements ActionListener {
   		
 	}
 	
-	// initialize blobs
+	// create a blob
 	
-	public void initBlobs() {
+	public void addBlob(boolean firstRun) {
 
-		// loop through array of blobPosition and add all members to arraylist of blobs
+		Random randomGenerator = new Random();
+
+		// if this is the first time running, create three initial blobs at (semi)random x/y locations ...
 		
-		for (int i=0; i < blobPosition.length; i++ ) {
-            blobArrayList.add(new EntityBlob(blobPosition[i][0], blobPosition[i][1], EntityBlob.BLOB_IMG));
-        }
+		if (firstRun == true) {
+
+			for (int i = 0; i < 3; i++) {
+			
+				// not entirely random; create safe area for player at center of screen
+				
+				int blobXPosition = randomGenerator.nextInt(400);
+				if (blobXPosition > 200) {
+					blobXPosition += 624;
+				}
+				
+				int blobYPosition = randomGenerator.nextInt(350);
+				if (blobYPosition > 175) {
+					blobYPosition += 418;
+				}
+				
+				// add created blob to arraylist
+				
+				blobArrayList.add(new EntityBlob(blobXPosition, blobYPosition, EntityBlob.BLOB_IMG));
+		
+				// ensure this loop doesn't recur
+				
+				firstRun = false;
+			}
+			
+		// ...otherwise, just create one blob
+					
+		} else {
+
+			int playerXPosition = player.getX();
+			int playerYPosition = player.getY();
+			boolean blobPositionNotFound = true;
+		
+			// again, not entirely random, create safe zone around player location
+			
+			while (blobPositionNotFound) {
+			
+				int blobXPosition = randomGenerator.nextInt(WIDTH);
+				int blobYPosition = randomGenerator.nextInt(HEIGHT);
+				
+				int xDiff = Math.abs(playerXPosition - blobXPosition);
+				int yDiff = Math.abs(playerYPosition - blobYPosition);
+				
+				// ensure 300 pixel zone around player and that new blob position is onscreen
+				// if not, try again
+				
+				if ((xDiff > 300) && (yDiff > 300) && (blobXPosition >= 0 ) && (blobXPosition <= WIDTH) &&
+						(blobYPosition >= 0 ) && (blobYPosition <= HEIGHT)) {
+				
+					blobArrayList.add(new EntityBlob(blobXPosition, blobYPosition, EntityBlob.BLOB_IMG));
+					blobPositionNotFound = false;
+				}
+			}
+		}
     }
 	
 	// draw the game state
@@ -181,8 +231,9 @@ public class Board extends JPanel implements ActionListener {
 	    	    EntityPlasmaball pb = (EntityPlasmaball) plasmaballArrayList.get(i);
 	    	    if (pb.isVisible()) { 
 	    	        pb.move();
+	    	    } else {
+	    	    	plasmaballArrayList.remove(i);
 	    	    }
-	    	    else plasmaballArrayList.remove(i);
 	    	}
 	    	
 	    	// determine how many blobs there are and move as necessary
@@ -193,8 +244,9 @@ public class Board extends JPanel implements ActionListener {
 	            EntityBlob b = (EntityBlob) blobArrayList.get(i);
 	            if (b.isVisible()) { 
 	                b.move(player.getX(), player.getY());
+	            } else {
+	            	blobArrayList.remove(i);
 	            }
-	            else blobArrayList.remove(i);
 	            if (blobArrayList.size() == 0) {
 	            	ingame = false;
 	            }
@@ -241,6 +293,7 @@ public class Board extends JPanel implements ActionListener {
 	
 	// checks to see if plasmaball has hit blob
 	// if so, both plasmaball and struck blob are removed from game
+	// new blob added to arraylist
 	
 	private void checkPlasmaballCollision() {
 		
@@ -259,6 +312,7 @@ public class Board extends JPanel implements ActionListener {
 		        if (pbRect.intersects(bRect)) {
 		            pb.setVisible(false);
 		            b.setVisible(false);
+		            addBlob(false);
 		            
 		            // explosion added to array at x/y location of collision
 		            
