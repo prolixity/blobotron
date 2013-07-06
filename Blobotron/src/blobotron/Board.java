@@ -32,7 +32,7 @@ public class Board extends JPanel implements ActionListener {
 	
 	// creates ingame and paused variables
 	
-	private boolean ingame;
+	public boolean ingame;
 	public boolean paused;
 	
 	// create arraylists to hold plasmaballs, blobs, and explosions
@@ -47,18 +47,29 @@ public class Board extends JPanel implements ActionListener {
 	public static final int WIDTH = 1024;
 	public static final int HEIGHT = 716;
 	
+	// create variable for key listener for game input
+	
+	KeyAdapter gameKeyAdapter;
+	
+	// create variable for number of aliens killed by player
+	
+	private int blobsKilled;
+	
 	// constructor, creates board for the game
 	
 	public Board() {
 
-		// is focusable, background color black, uses a buffer to paint, sets board size, sets ingame to true
+		// is focusable, background color black, uses a buffer to paint, sets board size
 				
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
         setSize(WIDTH, HEIGHT);
         
+        // initialize game variables
+        
         ingame = true;
         paused = false;
+        blobsKilled = 0;
         
         // initialize player in middle of screen
         
@@ -80,9 +91,20 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
         
         // start listening for player input
-		
- 		addKeyListener(new GameInput());
-  		
+
+        gameKeyAdapter = new KeyAdapter() {
+		     	
+        	public void keyReleased(KeyEvent e) {
+        		player.keyReleased(e);
+        	}
+
+        	public void keyPressed(KeyEvent e) {
+        		player.keyPressed(e);
+        	}
+        };
+        
+        addKeyListener(gameKeyAdapter);
+ 		
 	}
 	
 	// create a blob
@@ -133,12 +155,12 @@ public class Board extends JPanel implements ActionListener {
 				int blobXPosition = randomGenerator.nextInt(WIDTH);
 				int blobYPosition = randomGenerator.nextInt(HEIGHT);
 				
-				int xDiff = Math.abs(playerXPosition - blobXPosition);
-				int yDiff = Math.abs(playerYPosition - blobYPosition);
-				
 				// ensure 300 pixel zone around player and that new blob position is onscreen
 				// if not, try again
-				
+								
+				int xDiff = Math.abs(playerXPosition - blobXPosition);
+				int yDiff = Math.abs(playerYPosition - blobYPosition);
+								
 				if ((xDiff > 300) && (yDiff > 300) && (blobXPosition >= 0 ) && (blobXPosition <= WIDTH) &&
 						(blobYPosition >= 0 ) && (blobYPosition <= HEIGHT)) {
 				
@@ -202,16 +224,17 @@ public class Board extends JPanel implements ActionListener {
 		// if game is over, display game over screen
 		    
 		} else {
-					
+			
 			Font fontSpec = new Font("Impact", Font.BOLD, 64);
             FontMetrics fontInfo = this.getFontMetrics(fontSpec);
 
-            String msg = "Game Over! Press Esc";
+            String msg1 = "Game Over! Score: " + Integer.toString(blobsKilled);
+            String msg2 = "Press ESC for main menu";
             
             g.setColor(Color.blue);
             g.setFont(fontSpec);
-            g.drawString(msg, (WIDTH/2 - fontInfo.stringWidth(msg)/2), HEIGHT/2);
-			
+            g.drawString(msg1, (WIDTH/2 - fontInfo.stringWidth(msg1)/2), HEIGHT/2 - 60);
+            g.drawString(msg2, (WIDTH/2 - fontInfo.stringWidth(msg2)/2), HEIGHT/2 + 60);
 		}
 
     }
@@ -271,7 +294,7 @@ public class Board extends JPanel implements ActionListener {
 		}
 	}
 	
-	// checks to see if player collision has occurred; if so, game ends
+	// checks to see if player collision has occurred
 	
 	private void checkPlayerCollision() {
 				
@@ -283,17 +306,18 @@ public class Board extends JPanel implements ActionListener {
         	EntityBlob b = (EntityBlob) blobs.get(i);
             Rectangle blobRect = b.getBounds();
 
+            // if collision, end game
+            
             if (playerRect.intersects(blobRect)) {
-                player.setVisible(false);
-                ingame = false;
+
+            	ingame = false;
+            	player.setVisible(false);
+                
             }
         }
-
 	}
 	
 	// checks to see if plasmaball has hit blob
-	// if so, both plasmaball and struck blob are removed from game
-	// new blob added to arraylist
 	
 	private void checkPlasmaballCollision() {
 		
@@ -310,9 +334,19 @@ public class Board extends JPanel implements ActionListener {
 		    	Rectangle bRect = b.getBounds();
 		
 		        if (pbRect.intersects(bRect)) {
-		            pb.setVisible(false);
+	
+		        	// both plasmaball and struck blob are removed from game
+		        	
+		        	pb.setVisible(false);
 		            b.setVisible(false);
+		            
+		            // new blob added to game (false means this is not first blob created)
+		            
 		            addBlob(false);
+		            
+		            // score incremented
+		            
+		            blobsKilled++;
 		            
 		            // explosion added to array at x/y location of collision
 		            
@@ -320,21 +354,5 @@ public class Board extends JPanel implements ActionListener {
 		        }
 		    }
 		}
-		
 	}
-	
-	// listen for key input from player
-	// if key is pressed or released, call the appropriate method in EntityPlayer class
-	
-	private class GameInput extends KeyAdapter {
-
-		public void keyReleased(KeyEvent e) {
-            player.keyReleased(e);
-        }
-
-        public void keyPressed(KeyEvent e) {
-        	player.keyPressed(e);
-        }
-    }
-	
 }

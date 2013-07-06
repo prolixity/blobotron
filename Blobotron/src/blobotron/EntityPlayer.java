@@ -104,13 +104,12 @@ public class EntityPlayer extends Entity {
         if (key == KeyEvent.VK_DOWN) {
             dy = 2;
         }
-        
-        // ESC key exits to main menu
+
+        // ESC key exits to main menu at any time
         
         if (key == KeyEvent.VK_ESCAPE){
-
         	Start.boardScreen.setVisible(false);
-    		Start.menuScreen.setVisible(true);	
+    		Start.menuScreen.setVisible(true);
         }
         
         // space bar pauses game
