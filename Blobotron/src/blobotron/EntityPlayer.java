@@ -109,6 +109,7 @@ public class EntityPlayer extends Entity {
         
         if (key == KeyEvent.VK_ESCAPE){
         	Start.boardScreen.setVisible(false);
+        	Start.menuScreen.scoreLabel.setText("High score: " + Integer.toString(Start.menuScreen.highScore));
     		Start.menuScreen.setVisible(true);
         }
         
@@ -146,7 +147,8 @@ public class EntityPlayer extends Entity {
     // starting x/y location of plasmaball depends on which direction it's being fired in
     
     public void fire(String direction) {
-        if (direction == "w") {
+        
+    	if (direction == "w") {
         	plasmaballs.add(new EntityPlasmaball(this.x, this.y + PLAYER_HEIGHT/2, EntityPlasmaball.PLASMABALL_IMG, direction));
         }
         if (direction == "e") {

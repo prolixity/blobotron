@@ -8,7 +8,7 @@ public class EntityPlasmaball extends Entity {
 	
 	// set speed of plasmaball
 	
-	private final int PLASMABALL_SPEED = 2;
+	private final int PLASMABALL_SPEED = 5;
 	
 	// variable representing plasmaball direction
 	

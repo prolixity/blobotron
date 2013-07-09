@@ -53,7 +53,7 @@ public class Board extends JPanel implements ActionListener {
 	
 	// create variable for number of aliens killed by player
 	
-	private int blobsKilled;
+	public int blobsKilled;
 	
 	// constructor, creates board for the game
 	
@@ -225,16 +225,28 @@ public class Board extends JPanel implements ActionListener {
 		    
 		} else {
 			
+			// display game over info
+			
 			Font fontSpec = new Font("Impact", Font.BOLD, 64);
             FontMetrics fontInfo = this.getFontMetrics(fontSpec);
 
             String msg1 = "Game Over! Score: " + Integer.toString(blobsKilled);
-            String msg2 = "Press ESC for main menu";
+            String msg3 = "Press ESC for main menu";
             
             g.setColor(Color.blue);
             g.setFont(fontSpec);
-            g.drawString(msg1, (WIDTH/2 - fontInfo.stringWidth(msg1)/2), HEIGHT/2 - 60);
-            g.drawString(msg2, (WIDTH/2 - fontInfo.stringWidth(msg2)/2), HEIGHT/2 + 60);
+            g.drawString(msg1, (WIDTH/2 - fontInfo.stringWidth(msg1)/2), HEIGHT/2 - 80);
+                        
+            // check to see if high score and display if true
+			
+         			if (blobsKilled > Start.menuScreen.highScore) {
+         				Start.menuScreen.highScore = blobsKilled;
+         				String msg2 = "New high score!";
+         				g.drawString(msg2, (WIDTH/2 - fontInfo.stringWidth(msg2)/2), HEIGHT/2 + 0);
+         			}
+            
+            g.drawString(msg3, (WIDTH/2 - fontInfo.stringWidth(msg3)/2), HEIGHT/2 + 140);
+            
 		}
 
     }
@@ -317,40 +329,45 @@ public class Board extends JPanel implements ActionListener {
         }
 	}
 	
-	// checks to see if plasmaball has hit blob
+	// check to see if plasmaball has hit blob
 	
 	private void checkPlasmaballCollision() {
 		
-		plasmaballArrayList = player.getPlasmaballs();
+		// (first check ingame status (otherwise score can increase after player death))
 		
-		for (int i = 0; i < plasmaballArrayList.size(); i++) {
-		    
-			EntityPlasmaball pb = (EntityPlasmaball) plasmaballArrayList.get(i);
-		    Rectangle pbRect = pb.getBounds();
+		if (ingame == true) {
+			
+			plasmaballArrayList = player.getPlasmaballs();
+			
+			for (int i = 0; i < plasmaballArrayList.size(); i++) {
+			    
+				EntityPlasmaball pb = (EntityPlasmaball) plasmaballArrayList.get(i);
+			    Rectangle pbRect = pb.getBounds();
+			
+			    for (int j = 0; j<blobArrayList.size(); j++) {
+			     
+			    	EntityBlob b = (EntityBlob) blobArrayList.get(j);
+			    	Rectangle bRect = b.getBounds();
+			
+			        if (pbRect.intersects(bRect)) {
 		
-		    for (int j = 0; j<blobArrayList.size(); j++) {
-		     
-		    	EntityBlob b = (EntityBlob) blobArrayList.get(j);
-		    	Rectangle bRect = b.getBounds();
-		
-		        if (pbRect.intersects(bRect)) {
-	
-		        	// both plasmaball and struck blob are removed from game
-		        	
-		        	pb.setVisible(false);
-		            b.setVisible(false);
-		            
-		            // new blob added to game (false means this is not first blob created)
-		            
-		            addBlob(false);
-		            
-		            // score incremented
-		            
-		            blobsKilled++;
-		            
-		            // explosion added to array at x/y location of collision
-		            
-		            explosionArrayList.add(new EntityExplosion(pb.x, pb.y, EntityExplosion.EXPLOSION_IMG));
+			        	// both plasmaball and struck blob are removed from game
+			        	
+			        	pb.setVisible(false);
+			            b.setVisible(false);
+			            
+			            // new blob added to game (false means this is not first blob created)
+			            
+			            addBlob(false);
+			            
+			            // score incremented
+			            
+			            blobsKilled++;
+			            
+			            // explosion added to array at x/y location of collision
+			            
+			            explosionArrayList.add(new EntityExplosion(pb.x, pb.y, EntityExplosion.EXPLOSION_IMG));
+			        }
 		        }
 		    }
 		}

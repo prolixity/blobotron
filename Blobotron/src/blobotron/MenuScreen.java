@@ -23,6 +23,11 @@ public class MenuScreen extends JPanel implements ActionListener {
 	private JButton startButton;
 	private JButton exitButton;
 	private JLabel instrLabel;
+	public JLabel scoreLabel;
+	
+	// create high score variable
+	
+	public int highScore;
     
 	// constructor, displays menu screen
 	
@@ -31,7 +36,7 @@ public class MenuScreen extends JPanel implements ActionListener {
     	setFocusable(true);
         setBackground(Color.BLACK);
         setSize(Board.WIDTH, Board.HEIGHT);
-                
+               
         // buttons
         
         startButton = new JButton();
@@ -48,13 +53,19 @@ public class MenuScreen extends JPanel implements ActionListener {
         instrLabel.setFont(new Font("Impact", Font.PLAIN, 24));
         instrLabel.setForeground(Color.WHITE);
         
+        scoreLabel = new JLabel("High score: " + Integer.toString(highScore));
+        scoreLabel.setFont(new Font("Impact", Font.PLAIN, 24));
+        scoreLabel.setForeground(Color.WHITE);
+        
         // layout
         
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         instrLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        
         // setBorder(new EmptyBorder(new Insets(100, 100, 100, 100)));
         
         add(Box.createVerticalGlue());
@@ -63,6 +74,8 @@ public class MenuScreen extends JPanel implements ActionListener {
         add(exitButton);
         add(Box.createVerticalGlue());
         add(instrLabel);
+        add(Box.createVerticalGlue());
+        add(scoreLabel);
         add(Box.createVerticalGlue());
 
     }
