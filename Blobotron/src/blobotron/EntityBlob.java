@@ -1,23 +1,33 @@
 package blobotron;
 
+import javax.swing.ImageIcon;
+
 public class EntityBlob extends Entity {
 
-	// constants representing blob image and size
+	// constant representing blob image
 	
 	public static final String BLOB_IMG = "blob.gif";
-	private final int BLOB_WIDTH = 75;
-	private final int BLOB_HEIGHT = 100;
 	
 	// constructor
 	
-	public EntityBlob(int x, int y, String entityImage) {
+	public EntityBlob(int x, int y) {
 		
-		// invoke superclass entity; args = x location, y location, name of image
+		// call superclass constructor
 		
-		super(x, y, entityImage);
+		super(x, y);
+		
+		// create image icon and get image file for blob
+    	
+    	ImageIcon ii = new ImageIcon(this.getClass().getResource(BLOB_IMG));
+        image = ii.getImage();
+        
+        // assign width and height to blob
+        
+        width = image.getWidth(null);
+        height = image.getHeight(null);
 		
 	}
-	
+
 	// move blob
 	
 	public void move(int playerX, int playerY) {
@@ -50,12 +60,12 @@ public class EntityBlob extends Entity {
             y = 1;
         }
         
-        if (x > (Board.WIDTH - BLOB_WIDTH)) {
-            x = (Board.WIDTH - BLOB_WIDTH);
+        if (x > (Board.WIDTH - width)) {
+            x = (Board.WIDTH - width);
         }
 
-        if (y > (Board.HEIGHT - BLOB_HEIGHT)) {
-            y = (Board.HEIGHT - BLOB_HEIGHT);
+        if (y > (Board.HEIGHT - height)) {
+            y = (Board.HEIGHT - height);
         }
 
 	}

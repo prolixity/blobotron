@@ -92,9 +92,9 @@ public class MenuScreen extends JPanel implements ActionListener {
     		
     		// instantiate board, add to window, give it focus
     		
-    		Start.boardScreen = new Board();
-    		Start.gameWindow.add(Start.boardScreen);
-    		Start.boardScreen.requestFocusInWindow();
+    		Start.gameScreen = new Board();
+    		Start.gameWindow.add(Start.gameScreen);
+    		Start.gameScreen.requestFocusInWindow();
     	}
 		
     	// if exit button, end game

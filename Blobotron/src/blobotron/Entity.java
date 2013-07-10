@@ -3,55 +3,46 @@ package blobotron;
 import java.awt.Image;
 import java.awt.Rectangle;
 
-import javax.swing.ImageIcon;
-
 public class Entity {
 	
-    // x and y location of entity
+    // create variables for x and y coordinates of entity
 	
 	public int x;
     public int y;
     
-    // width and height of entity
+    // variables for width and height of entity
     
     public int width;
     public int height;
     
-    // will entity be displayed
-    
-    public boolean visible;
-    
-    // image for entity
+    // variable for entity graphics
     
     public Image image;
-
-    // constructor for entity; args = x location, y location, name of image
     
-    public Entity (int x, int y, String entityImage) {
+    // variable to toggle whether entity is displayed
+    
+    public boolean visible;
         
-    	// creates image icon
-    	
-    	ImageIcon ii = new ImageIcon(this.getClass().getResource(entityImage));
-    	
-    	// gets image file for entity
-    	
-        image = ii.getImage();
+    // constructor for entity; args = x/y coordinates
+    
+    public Entity (int x, int y) {
         
-        // assigns width and height to entity
-        
-        width = image.getWidth(null);
-        height = image.getHeight(null);
-        
-        // sets initial visibility for entity to true
+        // set initial visibility for entity to true
         
         visible = true;
         
-        // sets x and y location of entity
+        // set x and y location of entity
         
         this.x = x;
         this.y = y;
     }
-
+    
+    // get image for entity
+    
+    public Image getImage() {
+        return image;
+    }
+    
     // get x and y location of entity
     
     public int getX() {
@@ -74,14 +65,7 @@ public class Entity {
         this.visible = visible;
     }
 
-    // get image for entity
-    
-    public Image getImage() {
-        return image;
-    }
-
-    // get bounding box for entity, as determined by entity location (x, y)
-    // and entity's width and height
+    // get bounding box for entity, as determined by entity x/y coordinates, width, and height
     
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);

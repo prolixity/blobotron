@@ -14,7 +14,7 @@ public class Start extends JFrame {
     
     public static Container gameWindow;
     public static MenuScreen menuScreen;
-    public static Board boardScreen;
+    public static Board gameScreen;
             
     // constructor, creates game window
     

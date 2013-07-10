@@ -73,7 +73,7 @@ public class Board extends JPanel implements ActionListener {
         
         // initialize player in middle of screen
         
-        player = new EntityPlayer(WIDTH/2-25, HEIGHT/2-35, EntityPlayer.PLAYER_IMG);
+        player = new EntityPlayer(WIDTH/2-25, HEIGHT/2-35);
         
         // initialize blob, plasmaball and explosion arraylists
         
@@ -123,17 +123,17 @@ public class Board extends JPanel implements ActionListener {
 				
 				int blobXPosition = randomGenerator.nextInt(400);
 				if (blobXPosition > 200) {
-					blobXPosition += 624;
+					blobXPosition = WIDTH - (400 - blobXPosition);
 				}
 				
 				int blobYPosition = randomGenerator.nextInt(350);
 				if (blobYPosition > 175) {
-					blobYPosition += 418;
+					blobYPosition = HEIGHT - (350 - blobYPosition);
 				}
 				
 				// add created blob to arraylist
 				
-				blobArrayList.add(new EntityBlob(blobXPosition, blobYPosition, EntityBlob.BLOB_IMG));
+				blobArrayList.add(new EntityBlob(blobXPosition, blobYPosition));
 		
 				// ensure this loop doesn't recur
 				
@@ -144,27 +144,22 @@ public class Board extends JPanel implements ActionListener {
 					
 		} else {
 
-			int playerXPosition = player.getX();
-			int playerYPosition = player.getY();
 			boolean blobPositionNotFound = true;
 		
-			// again, not entirely random, create safe zone around player location
-			
 			while (blobPositionNotFound) {
 			
-				int blobXPosition = randomGenerator.nextInt(WIDTH);
-				int blobYPosition = randomGenerator.nextInt(HEIGHT);
-				
-				// ensure 300 pixel zone around player and that new blob position is onscreen
-				// if not, try again
+				int newBlobXPosition = randomGenerator.nextInt(WIDTH);
+				int newBlobYPosition = randomGenerator.nextInt(HEIGHT);
+			
+				// ensure chosen coordinate is not within 300 pixel zone around player
+				// if it is, try a new coordinate
 								
-				int xDiff = Math.abs(playerXPosition - blobXPosition);
-				int yDiff = Math.abs(playerYPosition - blobYPosition);
+				int xDiff = Math.abs(player.getX() - newBlobXPosition);
+				int yDiff = Math.abs(player.getY() - newBlobYPosition);
 								
-				if ((xDiff > 300) && (yDiff > 300) && (blobXPosition >= 0 ) && (blobXPosition <= WIDTH) &&
-						(blobYPosition >= 0 ) && (blobYPosition <= HEIGHT)) {
+				if ((xDiff > 300) && (yDiff > 300)) {
 				
-					blobArrayList.add(new EntityBlob(blobXPosition, blobYPosition, EntityBlob.BLOB_IMG));
+					blobArrayList.add(new EntityBlob(newBlobXPosition, newBlobYPosition));
 					blobPositionNotFound = false;
 				}
 			}
@@ -175,7 +170,7 @@ public class Board extends JPanel implements ActionListener {
 	
 	public void paint(Graphics g) {
     	
-		// if game is ongoing
+		// if game is ongoing...
 		
 		if (ingame) {
 			
@@ -216,12 +211,23 @@ public class Board extends JPanel implements ActionListener {
 	            g2d.drawImage(e.getImage(), e.getX(), e.getY(), this);
 	        }
 	        
+	        // display current score and high score in bottom left corner
+	        
+	        Font fontSpec = new Font("Impact", Font.PLAIN, 24);
+            String score = "Score: " + Integer.toString(blobsKilled);
+            String highScore = "High Score: " + Integer.toString(Start.menuScreen.highScore);
+
+            g.setColor(Color.white);
+            g.setFont(fontSpec);
+            g.drawString(score, 10, (HEIGHT - 35));
+            g.drawString(highScore, 10, (HEIGHT - 10));
+            
 	        // synchronize painting and end drawing
 	        
 		    Toolkit.getDefaultToolkit().sync();
 		    g.dispose();
 
-		// if game is over, display game over screen
+		// if game is over...
 		    
 		} else {
 			
@@ -255,9 +261,9 @@ public class Board extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		// if game is not paused...
+		// if game is active and not paused...
 		
-		if (!paused) {
+		if (ingame && !paused) {
 			
 			// determine how many plasmaballs have been fired and move as necessary
 			// if not visible, remove from arraylist
@@ -366,7 +372,7 @@ public class Board extends JPanel implements ActionListener {
 			            
 			            // explosion added to array at x/y location of collision
 			            
-			            explosionArrayList.add(new EntityExplosion(pb.x, pb.y, EntityExplosion.EXPLOSION_IMG));
+			            explosionArrayList.add(new EntityExplosion(pb.x, pb.y));
 			        }
 		        }
 		    }

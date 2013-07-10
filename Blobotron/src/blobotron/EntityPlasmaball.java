@@ -1,5 +1,7 @@
 package blobotron;
 
+import javax.swing.ImageIcon;
+
 public class EntityPlasmaball extends Entity {
 	
 	// constant representing plasmaball image
@@ -16,11 +18,23 @@ public class EntityPlasmaball extends Entity {
 	
 	// constructor
 	
-	public EntityPlasmaball(int x, int y, String entityImage, String direction) {
+	public EntityPlasmaball(int x, int y, String direction) {
 
-		// invoke superclass Entity; args = x location, y location, name of image
+		// call superclass constructor
 		
-		super(x, y, entityImage);
+		super(x, y);
+	
+		// create image icon and get image file for plasmaball
+    	
+    	ImageIcon ii = new ImageIcon(this.getClass().getResource(PLASMABALL_IMG));
+        image = ii.getImage();
+        
+        // assign width and height to plasmaball
+        
+        width = image.getWidth(null);
+        height = image.getHeight(null);
+
+        // assign direction to plasmaball
 		
 		this.direction = direction;
 		

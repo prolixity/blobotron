@@ -3,14 +3,14 @@ package blobotron;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+
 public class EntityPlayer extends Entity {
 
-	// constants representing player image and size
+	// constant representing player image
 	
 	public static final String PLAYER_IMG = "player.gif";
-	private final int PLAYER_WIDTH = 50;
-	private final int PLAYER_HEIGHT = 71;
-
+	
 	// variables representing player movement
 	
 	private int dx;
@@ -22,18 +22,28 @@ public class EntityPlayer extends Entity {
 	
 	// constructor
 	
-	public EntityPlayer(int x, int y, String entityImage) {
+	public EntityPlayer(int x, int y) {
 
-		// invoke superclass entity; args = x location, y location, name of image
+		// call superclass constructor
 		
-		super(x, y, entityImage);
+		super(x, y);
 		
-		// instantiate plasmaballs fired by player
+		// create image icon and get image file for player
+    	
+    	ImageIcon ii = new ImageIcon(this.getClass().getResource(PLAYER_IMG));
+        image = ii.getImage();
+        
+        // assign width and height to player
+        
+        width = image.getWidth(null);
+        height = image.getHeight(null);
+        		
+		// instantiate arraylist of plasmaballs fired by player
 		
 		plasmaballs = new ArrayList<EntityPlasmaball>();
 		
 	}
-	
+
 	// change player coordinates
 	
 	public void move() {
@@ -53,12 +63,12 @@ public class EntityPlayer extends Entity {
             y = 1;
         }
         
-        if (x > (Board.WIDTH - PLAYER_WIDTH)) {
-            x = (Board.WIDTH - PLAYER_WIDTH);
+        if (x > (Board.WIDTH - width)) {
+            x = (Board.WIDTH - width);
         }
 
-        if (y > (Board.HEIGHT - PLAYER_HEIGHT)) {
-            y = (Board.HEIGHT - PLAYER_HEIGHT);
+        if (y > (Board.HEIGHT - height)) {
+            y = (Board.HEIGHT - height);
         }
         
     }
@@ -108,7 +118,7 @@ public class EntityPlayer extends Entity {
         // ESC key exits to main menu at any time
         
         if (key == KeyEvent.VK_ESCAPE){
-        	Start.boardScreen.setVisible(false);
+        	Start.gameScreen.setVisible(false);
         	Start.menuScreen.scoreLabel.setText("High score: " + Integer.toString(Start.menuScreen.highScore));
     		Start.menuScreen.setVisible(true);
         }
@@ -116,11 +126,11 @@ public class EntityPlayer extends Entity {
         // space bar pauses game
         
         if (key == KeyEvent.VK_SPACE){
-        	Start.boardScreen.paused = !Start.boardScreen.paused;
+        	Start.gameScreen.paused = !Start.gameScreen.paused;
         }
     }
 
-	// on key release, stop modifying location
+	// on key release, stop player movement
 	
     public void keyReleased(KeyEvent e) {
     	
@@ -149,16 +159,16 @@ public class EntityPlayer extends Entity {
     public void fire(String direction) {
         
     	if (direction == "w") {
-        	plasmaballs.add(new EntityPlasmaball(this.x, this.y + PLAYER_HEIGHT/2, EntityPlasmaball.PLASMABALL_IMG, direction));
+        	plasmaballs.add(new EntityPlasmaball(x, y + height/2, direction));
         }
         if (direction == "e") {
-        	plasmaballs.add(new EntityPlasmaball(this.x + PLAYER_WIDTH, this.y + PLAYER_HEIGHT/2, EntityPlasmaball.PLASMABALL_IMG, direction));
+        	plasmaballs.add(new EntityPlasmaball(x + width, y + height/2, direction));
         }
         if (direction == "n") {
-        	plasmaballs.add(new EntityPlasmaball(this.x + PLAYER_WIDTH/2, this.y, EntityPlasmaball.PLASMABALL_IMG, direction));
+        	plasmaballs.add(new EntityPlasmaball(x + width/2, y, direction));
         }
         if (direction == "s") {
-        	plasmaballs.add(new EntityPlasmaball(this.x + PLAYER_WIDTH/2, this.y + PLAYER_HEIGHT, EntityPlasmaball.PLASMABALL_IMG, direction));
+        	plasmaballs.add(new EntityPlasmaball(x + width/2, y + height, direction));
         }
     }
     

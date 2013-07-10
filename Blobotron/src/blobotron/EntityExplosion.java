@@ -1,18 +1,25 @@
 package blobotron;
 
+import javax.swing.ImageIcon;
+
 public class EntityExplosion extends Entity {
 
-	// constant representing plasmaball image
+	// constant representing explosion image
 	
 	public static final String EXPLOSION_IMG = "explosion.gif";
-		
+	
 	// constructor
 	
-	public EntityExplosion (int x, int y, String entityImage) {
+	public EntityExplosion (int x, int y) {
 
-		// invoke superclass Entity; args = x location, y location, name of image
+		// call superclass constructor
 		
-		super(x, y, entityImage);
+		super(x, y);
+	
+		// create image icon and get image file for explosion
+    	
+    	ImageIcon ii = new ImageIcon(this.getClass().getResource(EXPLOSION_IMG));
+        image = ii.getImage();
 		
 	}
 	
